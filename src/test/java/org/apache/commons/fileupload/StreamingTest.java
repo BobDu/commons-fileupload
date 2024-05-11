@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileUploadBase.IOFileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;

@@ -22,15 +22,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.AsyncContext;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletConnection;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpUpgradeHandler;
+import jakarta.servlet.http.Part;
+
 
 public class MockHttpServletRequest implements HttpServletRequest {
 
@@ -70,7 +84,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getAuthType()
+     * @see jakarta.servlet.http.HttpServletRequest#getAuthType()
      */
     @Override
     public String getAuthType() {
@@ -78,7 +92,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getCookies()
+     * @see jakarta.servlet.http.HttpServletRequest#getCookies()
      */
     @Override
     public Cookie[] getCookies() {
@@ -86,7 +100,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getDateHeader(String)
+     * @see jakarta.servlet.http.HttpServletRequest#getDateHeader(String)
      */
     @Override
     public long getDateHeader(final String arg0) {
@@ -94,7 +108,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getHeader(String)
+     * @see jakarta.servlet.http.HttpServletRequest#getHeader(String)
      */
     @Override
     public String getHeader(final String headerName) {
@@ -102,7 +116,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getHeaders(String)
+     * @see jakarta.servlet.http.HttpServletRequest#getHeaders(String)
      */
     @Override
     public Enumeration<String> getHeaders(final String arg0) {
@@ -111,7 +125,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getHeaderNames()
+     * @see jakarta.servlet.http.HttpServletRequest#getHeaderNames()
      */
     @Override
     public Enumeration<String> getHeaderNames() {
@@ -120,7 +134,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getIntHeader(String)
+     * @see jakarta.servlet.http.HttpServletRequest#getIntHeader(String)
      */
     @Override
     public int getIntHeader(final String arg0) {
@@ -128,7 +142,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getMethod()
+     * @see jakarta.servlet.http.HttpServletRequest#getMethod()
      */
     @Override
     public String getMethod() {
@@ -136,7 +150,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getPathInfo()
+     * @see jakarta.servlet.http.HttpServletRequest#getPathInfo()
      */
     @Override
     public String getPathInfo() {
@@ -144,7 +158,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getPathTranslated()
+     * @see jakarta.servlet.http.HttpServletRequest#getPathTranslated()
      */
     @Override
     public String getPathTranslated() {
@@ -152,7 +166,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getContextPath()
+     * @see jakarta.servlet.http.HttpServletRequest#getContextPath()
      */
     @Override
     public String getContextPath() {
@@ -160,7 +174,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getQueryString()
+     * @see jakarta.servlet.http.HttpServletRequest#getQueryString()
      */
     @Override
     public String getQueryString() {
@@ -168,7 +182,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getRemoteUser()
+     * @see jakarta.servlet.http.HttpServletRequest#getRemoteUser()
      */
     @Override
     public String getRemoteUser() {
@@ -176,7 +190,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#isUserInRole(String)
+     * @see jakarta.servlet.http.HttpServletRequest#isUserInRole(String)
      */
     @Override
     public boolean isUserInRole(final String arg0) {
@@ -184,7 +198,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getUserPrincipal()
+     * @see jakarta.servlet.http.HttpServletRequest#getUserPrincipal()
      */
     @Override
     public Principal getUserPrincipal() {
@@ -192,7 +206,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getRequestedSessionId()
+     * @see jakarta.servlet.http.HttpServletRequest#getRequestedSessionId()
      */
     @Override
     public String getRequestedSessionId() {
@@ -200,7 +214,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getRequestURI()
+     * @see jakarta.servlet.http.HttpServletRequest#getRequestURI()
      */
     @Override
     public String getRequestURI() {
@@ -208,7 +222,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getRequestURL()
+     * @see jakarta.servlet.http.HttpServletRequest#getRequestURL()
      */
     @Override
     public StringBuffer getRequestURL() {
@@ -216,7 +230,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getServletPath()
+     * @see jakarta.servlet.http.HttpServletRequest#getServletPath()
      */
     @Override
     public String getServletPath() {
@@ -224,7 +238,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getSession(boolean)
+     * @see jakarta.servlet.http.HttpServletRequest#getSession(boolean)
      */
     @Override
     public HttpSession getSession(final boolean arg0) {
@@ -232,15 +246,20 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#getSession()
+     * @see jakarta.servlet.http.HttpServletRequest#getSession()
      */
     @Override
     public HttpSession getSession() {
         return null;
     }
 
+    @Override
+    public String changeSessionId() {
+        return "";
+    }
+
     /**
-     * @see javax.servlet.http.HttpServletRequest#isRequestedSessionIdValid()
+     * @see jakarta.servlet.http.HttpServletRequest#isRequestedSessionIdValid()
      */
     @Override
     public boolean isRequestedSessionIdValid() {
@@ -248,7 +267,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#isRequestedSessionIdFromCookie()
+     * @see jakarta.servlet.http.HttpServletRequest#isRequestedSessionIdFromCookie()
      */
     @Override
     public boolean isRequestedSessionIdFromCookie() {
@@ -256,25 +275,45 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.http.HttpServletRequest#isRequestedSessionIdFromURL()
+     * @see jakarta.servlet.http.HttpServletRequest#isRequestedSessionIdFromURL()
      */
     @Override
     public boolean isRequestedSessionIdFromURL() {
         return false;
     }
 
-    /**
-     * @see javax.servlet.http.HttpServletRequest#isRequestedSessionIdFromUrl()
-     * @deprecated
-     */
     @Override
-    @Deprecated
-    public boolean isRequestedSessionIdFromUrl() {
+    public boolean authenticate(HttpServletResponse httpServletResponse) throws IOException, ServletException {
         return false;
     }
 
+    @Override
+    public void login(String s, String s1) throws ServletException {
+
+    }
+
+    @Override
+    public void logout() throws ServletException {
+
+    }
+
+    @Override
+    public Collection<Part> getParts() throws IOException, ServletException {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Part getPart(String s) throws IOException, ServletException {
+        return null;
+    }
+
+    @Override
+    public <T extends HttpUpgradeHandler> T upgrade(Class<T> aClass) throws IOException, ServletException {
+        return null;
+    }
+
     /**
-     * @see javax.servlet.ServletRequest#getAttribute(String)
+     * @see jakarta.servlet.ServletRequest#getAttribute(String)
      */
     @Override
     public Object getAttribute(final String arg0) {
@@ -282,7 +321,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getAttributeNames()
+     * @see jakarta.servlet.ServletRequest#getAttributeNames()
      */
     @Override
     public Enumeration<String> getAttributeNames() {
@@ -290,7 +329,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getCharacterEncoding()
+     * @see jakarta.servlet.ServletRequest#getCharacterEncoding()
      */
     @Override
     public String getCharacterEncoding() {
@@ -298,7 +337,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#setCharacterEncoding(String)
+     * @see jakarta.servlet.ServletRequest#setCharacterEncoding(String)
      */
     @Override
     public void setCharacterEncoding(final String arg0)
@@ -306,7 +345,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getContentLength()
+     * @see jakarta.servlet.ServletRequest#getContentLength()
      */
     @Override
     public int getContentLength() {
@@ -323,6 +362,11 @@ public class MockHttpServletRequest implements HttpServletRequest {
         return iLength;
     }
 
+    @Override
+    public long getContentLengthLong() {
+        return 0;
+    }
+
     /**
      * For testing attack scenarios in SizesTest.
      */
@@ -331,7 +375,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getContentType()
+     * @see jakarta.servlet.ServletRequest#getContentType()
      */
     @Override
     public String getContentType() {
@@ -339,7 +383,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getInputStream()
+     * @see jakarta.servlet.ServletRequest#getInputStream()
      */
     @Override
     public ServletInputStream getInputStream() throws IOException {
@@ -357,7 +401,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getParameter(String)
+     * @see jakarta.servlet.ServletRequest#getParameter(String)
      */
     @Override
     public String getParameter(final String arg0) {
@@ -365,7 +409,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getParameterNames()
+     * @see jakarta.servlet.ServletRequest#getParameterNames()
      */
     @Override
     public Enumeration<String> getParameterNames() {
@@ -373,7 +417,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getParameterValues(String)
+     * @see jakarta.servlet.ServletRequest#getParameterValues(String)
      */
     @Override
     public String[] getParameterValues(final String arg0) {
@@ -381,7 +425,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getParameterMap()
+     * @see jakarta.servlet.ServletRequest#getParameterMap()
      */
     @Override
     public Map<String, String[]> getParameterMap() {
@@ -389,7 +433,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getProtocol()
+     * @see jakarta.servlet.ServletRequest#getProtocol()
      */
     @Override
     public String getProtocol() {
@@ -397,7 +441,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getScheme()
+     * @see jakarta.servlet.ServletRequest#getScheme()
      */
     @Override
     public String getScheme() {
@@ -405,7 +449,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getServerName()
+     * @see jakarta.servlet.ServletRequest#getServerName()
      */
     @Override
     public String getServerName() {
@@ -413,7 +457,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getLocalName()
+     * @see jakarta.servlet.ServletRequest#getLocalName()
      */
     @Override
     public String getLocalName() {
@@ -421,7 +465,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getServerPort()
+     * @see jakarta.servlet.ServletRequest#getServerPort()
      */
     @Override
     public int getServerPort() {
@@ -429,15 +473,65 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getLocalPort()
+     * @see jakarta.servlet.ServletRequest#getLocalPort()
      */
     @Override
     public int getLocalPort() {
         return 0;
     }
 
+    @Override
+    public ServletContext getServletContext() {
+        return null;
+    }
+
+    @Override
+    public AsyncContext startAsync() throws IllegalStateException {
+        return null;
+    }
+
+    @Override
+    public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) throws IllegalStateException {
+        return null;
+    }
+
+    @Override
+    public boolean isAsyncStarted() {
+        return false;
+    }
+
+    @Override
+    public boolean isAsyncSupported() {
+        return false;
+    }
+
+    @Override
+    public AsyncContext getAsyncContext() {
+        return null;
+    }
+
+    @Override
+    public DispatcherType getDispatcherType() {
+        return null;
+    }
+
+    @Override
+    public String getRequestId() {
+        return "";
+    }
+
+    @Override
+    public String getProtocolRequestId() {
+        return "";
+    }
+
+    @Override
+    public ServletConnection getServletConnection() {
+        return null;
+    }
+
     /**
-     * @see javax.servlet.ServletRequest#getRemotePort()
+     * @see jakarta.servlet.ServletRequest#getRemotePort()
      */
     @Override
     public int getRemotePort() {
@@ -445,7 +539,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getReader()
+     * @see jakarta.servlet.ServletRequest#getReader()
      */
     @Override
     public BufferedReader getReader() throws IOException {
@@ -453,7 +547,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getRemoteAddr()
+     * @see jakarta.servlet.ServletRequest#getRemoteAddr()
      */
     @Override
     public String getRemoteAddr() {
@@ -461,7 +555,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getLocalAddr()
+     * @see jakarta.servlet.ServletRequest#getLocalAddr()
      */
     @Override
     public String getLocalAddr() {
@@ -469,7 +563,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getRemoteHost()
+     * @see jakarta.servlet.ServletRequest#getRemoteHost()
      */
     @Override
     public String getRemoteHost() {
@@ -477,21 +571,21 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#setAttribute(String, Object)
+     * @see jakarta.servlet.ServletRequest#setAttribute(String, Object)
      */
     @Override
     public void setAttribute(final String arg0, final Object arg1) {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#removeAttribute(String)
+     * @see jakarta.servlet.ServletRequest#removeAttribute(String)
      */
     @Override
     public void removeAttribute(final String arg0) {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getLocale()
+     * @see jakarta.servlet.ServletRequest#getLocale()
      */
     @Override
     public Locale getLocale() {
@@ -499,7 +593,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getLocales()
+     * @see jakarta.servlet.ServletRequest#getLocales()
      */
     @Override
     public Enumeration<Locale> getLocales() {
@@ -507,7 +601,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#isSecure()
+     * @see jakarta.servlet.ServletRequest#isSecure()
      */
     @Override
     public boolean isSecure() {
@@ -515,25 +609,15 @@ public class MockHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * @see javax.servlet.ServletRequest#getRequestDispatcher(String)
+     * @see jakarta.servlet.ServletRequest#getRequestDispatcher(String)
      */
     @Override
     public RequestDispatcher getRequestDispatcher(final String arg0) {
         return null;
     }
 
-    /**
-     * @see javax.servlet.ServletRequest#getRealPath(String)
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public String getRealPath(final String arg0) {
-        return null;
-    }
-
     private static class MyServletInputStream
-        extends javax.servlet.ServletInputStream {
+        extends jakarta.servlet.ServletInputStream {
 
         private final InputStream in;
         private final int readLimit;
@@ -560,6 +644,20 @@ public class MockHttpServletRequest implements HttpServletRequest {
             return in.read(b, off, len);
         }
 
+        @Override
+        public boolean isFinished() {
+            return false;
+        }
+
+        @Override
+        public boolean isReady() {
+            return false;
+        }
+
+        @Override
+        public void setReadListener(ReadListener readListener) {
+
+        }
     }
 
 }

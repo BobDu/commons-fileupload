@@ -29,7 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.MultipartStream.ItemInputStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
