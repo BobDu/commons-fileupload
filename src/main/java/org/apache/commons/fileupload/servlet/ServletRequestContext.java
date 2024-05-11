@@ -19,7 +19,7 @@ package org.apache.commons.fileupload.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.UploadContext;
